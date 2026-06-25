@@ -1,0 +1,16 @@
+name: Main CI
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    uses: CSDchenshaodong/android-template/.github/workflows/ci.yml@v1
+    secrets: inherit
+    with:
+      ktlint-task: ''
+      detekt-task: ''
+      lint-task: 'lintDebug'
+      unit-test-task: 'testDebugUnitTest'
+      build-flavors: '["debug"]'

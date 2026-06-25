@@ -1,0 +1,16 @@
+name: PR Check
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  pr-check:
+    uses: CSDchenshaodong/android-template/.github/workflows/pr-check.yml@v1
+    secrets: inherit
+    with:
+      # MLKitOcr 项目暂无 ktlint/detekt/spotless，全部跳过
+      ktlint-task: ''
+      detekt-task: ''
+      spotless-task: ''
+      coverage-task: ''
+      dependency-check-task: ''
