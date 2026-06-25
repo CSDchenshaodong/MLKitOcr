@@ -21,4 +21,10 @@
     <string name="review_field_id_number">公民身份号码</string>
     <string name="review_confirm">确认使用</string>
     <string name="review_retake">重新拍摄</string>
+
+    <string name="login_subtitle">请登录后使用身份证识别服务</string>
+    <string name="login_username_hint">用户名</string>
+    <string name="login_password_hint">密码</string>
+    <string name="login_button">登 录</string>
+    <string name="login_error">账号或密码错误</string>
 </resources>
