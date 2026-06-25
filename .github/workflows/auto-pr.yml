@@ -4,6 +4,9 @@ on:
     branches:
       - 'feature/**'
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
 jobs:
   auto-pr:
     runs-on: ubuntu-latest
@@ -14,6 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const branch = context.ref.replace('refs/heads/', '');
             const featureName = branch.replace(/^feature\//, '');
@@ -34,6 +38,8 @@ jobs:
               return;
             }
 
+            console.log(`创建 PR: ${branch} → main`);
+
             // 创建 PR
             const { data: pr } = await github.rest.pulls.create({
               owner: context.repo.owner,
@@ -44,14 +50,17 @@ jobs:
               body: `## 🤖 自动创建的 PR\n\n分支 \`${branch}\` 已推送。\n\nCI 通过后将自动合并。`
             });
 
-            console.log(`PR 已创建: #${pr.number}`);
+            console.log(`✅ PR 已创建: #${pr.number} ${pr.html_url}`);
 
-            // 启用自动合并
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              auto_merge: { merge_method: 'squash' }
-            });
-
-            console.log(`已启用自动合并`);
+            // 尝试启用自动合并（squash）
+            try {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                auto_merge: { merge_method: 'squash' }
+              });
+              console.log(`✅ 已启用自动合并`);
+            } catch (e) {
+              console.log(`⚠️ 无法启用自动合并: ${e.message}`);
+            }
