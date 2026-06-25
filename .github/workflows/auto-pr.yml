@@ -1,0 +1,66 @@
+name: Auto PR
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  auto-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branch = context.ref.replace('refs/heads/', '');
+            const featureName = branch.replace(/^feature\//, '');
+            const title = 'feat: ' + featureName
+              .replace(/[/-]/g, ' ')
+              .replace(/\b\w/g, c => c.toUpperCase());
+
+            // 检查是否已有该分支的 PR
+            const { data: existingPRs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branch}`,
+              state: 'open'
+            });
+
+            if (existingPRs.length > 0) {
+              console.log(`PR 已存在: #${existingPRs[0].number}`);
+              return;
+            }
+
+            console.log(`创建 PR: ${branch} → main`);
+
+            // 创建 PR
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              head: branch,
+              base: 'main',
+              body: `## 🤖 自动创建的 PR\n\n分支 \`${branch}\` 已推送。\n\nCI 通过后将自动合并。`
+            });
+
+            console.log(`✅ PR 已创建: #${pr.number} ${pr.html_url}`);
+
+            // 尝试启用自动合并（squash）
+            try {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                auto_merge: { merge_method: 'squash' }
+              });
+              console.log(`✅ 已启用自动合并`);
+            } catch (e) {
+              console.log(`⚠️ 无法启用自动合并: ${e.message}`);
+            }
