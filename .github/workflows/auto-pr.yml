@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      checks: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/github-script@v7
@@ -47,12 +48,12 @@ jobs:
               title: title,
               head: branch,
               base: 'main',
-              body: `## 🤖 自动创建的 PR\n\n分支 \`${branch}\` 已推送。\n\nCI 通过后将自动合并。`
+              body: `## 自动创建的 PR\n\n分支 \`${branch}\` 已推送。\n\nCI 通过后将自动合并。`
             });
 
-            console.log(`✅ PR 已创建: #${pr.number} ${pr.html_url}`);
+            console.log(`PR 已创建: #${pr.number}`);
 
-            // 尝试启用自动合并（squash）
+            // 启用自动合并
             try {
               await github.rest.pulls.update({
                 owner: context.repo.owner,
@@ -60,7 +61,7 @@ jobs:
                 pull_number: pr.number,
                 auto_merge: { merge_method: 'squash' }
               });
-              console.log(`✅ 已启用自动合并`);
+              console.log(`已启用自动合并`);
             } catch (e) {
-              console.log(`⚠️ 无法启用自动合并: ${e.message}`);
+              console.log(`自动合并启用失败: ${e.message}`);
             }
