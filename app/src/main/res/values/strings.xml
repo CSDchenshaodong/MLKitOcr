@@ -27,4 +27,11 @@
     <string name="login_password_hint">Password</string>
     <string name="login_button">Sign In</string>
     <string name="login_error">Incorrect username or password</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_desc">Switch between Chinese and English</string>
+    <string name="settings_logout">Log Out</string>
+    <string name="settings_button">Settings</string>
+    <string name="action_settings">Settings</string>
 </resources>

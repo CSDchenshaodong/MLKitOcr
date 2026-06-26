@@ -1,12 +1,14 @@
 package com.example.mlkitocr
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +31,7 @@ import com.example.mlkitocr.idcard.IdCardFrontRecognizer
 import com.example.mlkitocr.idcard.RecognitionConfidence
 import com.example.mlkitocr.mlkit.MlKitOcrEngine
 import com.example.mlkitocr.review.ReviewActivity
+import com.example.mlkitocr.util.LocaleHelper
 import com.google.android.material.button.MaterialButton
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -40,11 +43,16 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+    }
+
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: IdCardOverlayView
     private lateinit var captureButton: MaterialButton
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
+    private lateinit var settingsButton: ImageButton
 
     private val cropper = BitmapCropper()
     private val recognizer by lazy {
@@ -97,8 +105,13 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        settingsButton = findViewById<ImageButton>(R.id.settingsButton)
         captureButton.setOnClickListener {
             captureImage()
+        }
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
 
         ensureCameraPermission()
