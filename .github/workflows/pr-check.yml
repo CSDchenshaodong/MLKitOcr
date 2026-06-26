@@ -18,7 +18,7 @@ jobs:
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Run lint
-        run: ./gradlew lintDebug --continue
+        run: ./gradlew lintDebug --continue --stacktrace
       - name: Upload lint report
         if: failure()
         uses: actions/upload-artifact@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest --stacktrace
 
   build-check:
     runs-on: ubuntu-latest
@@ -50,4 +50,4 @@ jobs:
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Assemble
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
