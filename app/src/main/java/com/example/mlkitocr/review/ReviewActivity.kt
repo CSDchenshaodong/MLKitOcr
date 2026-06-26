@@ -1,6 +1,7 @@
 package com.example.mlkitocr.review
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.TextView
@@ -10,9 +11,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mlkitocr.R
 import com.example.mlkitocr.idcard.RecognitionConfidence
+import com.example.mlkitocr.util.LocaleHelper
 import com.google.android.material.button.MaterialButton
 
 class ReviewActivity : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

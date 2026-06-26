@@ -3,25 +3,31 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Run lint
-        run: ./gradlew lintDebug --continue
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew lintDebug --continue --stacktrace --info 2>&1 | tee gradle-lint.log
+      - name: Upload lint log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gradle-lint-log
+          path: gradle-lint.log
       - name: Upload lint report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-report
           path: app/build/reports/lint-results*.html
@@ -29,25 +35,43 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --stacktrace --info 2>&1 | tee gradle-test.log
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gradle-test-log
+          path: gradle-test.log
 
   build-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Fix gradlew permission
         run: chmod +x gradlew
       - name: Assemble
-        run: ./gradlew assembleDebug
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace --info 2>&1 | tee gradle-build.log
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gradle-build-log
+          path: gradle-build.log
