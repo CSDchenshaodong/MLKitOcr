@@ -29,9 +29,13 @@
     <string name="login_error">Incorrect username or password</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_short">Settings</string>
+    <string name="settings_version">Version %s</string>
     <string name="settings_language">Language</string>
     <string name="settings_language_desc">Switch between Chinese and English</string>
     <string name="settings_logout">Log Out</string>
-    <string name="settings_button">Settings</string>
-    <string name="action_settings">Settings</string>
+    <string name="avatar_change_title">Change Avatar</string>
+    <string name="avatar_change_hint">Tap to change avatar</string>
+    <string name="avatar_take_photo">Take Photo</string>
+    <string name="avatar_choose_from_gallery">Choose from Gallery</string>
 </resources>

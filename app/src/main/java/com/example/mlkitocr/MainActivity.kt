@@ -106,12 +106,13 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         settingsButton = findViewById<ImageButton>(R.id.settingsButton)
-        captureButton.setOnClickListener {
-            captureImage()
-        }
         settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+        }
+
+        captureButton.setOnClickListener {
+            captureImage()
         }
 
         ensureCameraPermission()

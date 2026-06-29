@@ -1,21 +1,60 @@
 package com.example.mlkitocr
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.mlkitocr.util.AvatarManager
 import com.example.mlkitocr.util.LocaleHelper
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+    }
+
+    private lateinit var avatarView: ShapeableImageView
+    private lateinit var avatarManager: AvatarManager
+    private var cameraPhotoUri: Uri? = null
+
+    private val takePhotoLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            cameraPhotoUri?.let { uri ->
+                val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+                if (bitmap != null) {
+                    avatarManager.save(bitmap)
+                    avatarView.setImageBitmap(bitmap)
+                }
+            }
+        }
+    }
+
+    private val pickPhotoLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(it))
+            if (bitmap != null) {
+                avatarManager.save(bitmap)
+                avatarView.setImageBitmap(bitmap)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,22 +67,29 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
+        // Avatar
+        avatarManager = AvatarManager(this)
+        avatarView = findViewById(R.id.settingsAvatar)
+        loadAvatar()
+        avatarView.setOnClickListener { showAvatarPickerDialog() }
+
+        // Version info
+        setupVersionInfo()
+
+        // Language switch
         val currentLang = LocaleHelper.getLanguage(this)
         val languageSwitch = findViewById<SwitchMaterial>(R.id.languageSwitch)
         val languageLabel = findViewById<TextView>(R.id.languageLabel)
-
-        // Initialize switch state
         languageSwitch.isChecked = currentLang == "en"
         updateLanguageLabel(languageLabel, currentLang)
-
         languageSwitch.setOnCheckedChangeListener { _, isEnglish ->
             val newLang = if (isEnglish) "en" else "zh"
             LocaleHelper.setLanguage(this, newLang)
             updateLanguageLabel(languageLabel, newLang)
-            // Restart activity to apply new language
             recreate()
         }
 
+        // Logout
         findViewById<MaterialButton>(R.id.logoutButton).setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -51,6 +97,50 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
             finishAffinity()
         }
+    }
+
+    private fun loadAvatar() {
+        val bitmap = avatarManager.load()
+        if (bitmap != null) {
+            avatarView.setImageBitmap(bitmap)
+        }
+    }
+
+    private fun setupVersionInfo() {
+        val versionText = findViewById<TextView>(R.id.versionInfo)
+        try {
+            val pkgInfo = packageManager.getPackageInfo(packageName, 0)
+            versionText.text = getString(R.string.settings_version, pkgInfo.versionName ?: "1.0")
+        } catch (e: PackageManager.NameNotFoundException) {
+            versionText.text = getString(R.string.settings_version, "1.0")
+        }
+    }
+
+    private fun showAvatarPickerDialog() {
+        val options = arrayOf(getString(R.string.avatar_take_photo), getString(R.string.avatar_choose_from_gallery))
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.avatar_change_title))
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> takePhoto()
+                    1 -> pickPhoto()
+                }
+            }
+            .show()
+    }
+
+    private fun takePhoto() {
+        val photoFile = File(cacheDir, "camera_avatar.jpg")
+        cameraPhotoUri = FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            photoFile
+        )
+        takePhotoLauncher.launch(cameraPhotoUri!!)
+    }
+
+    private fun pickPhoto() {
+        pickPhotoLauncher.launch("image/*")
     }
 
     private fun updateLanguageLabel(label: TextView, lang: String) {
