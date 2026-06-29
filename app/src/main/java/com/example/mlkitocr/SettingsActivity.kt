@@ -1,11 +1,10 @@
 package com.example.mlkitocr
 
 import android.app.AlertDialog
-import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,20 +13,13 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mlkitocr.util.AvatarManager
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
-import com.google.android.material.textfield.TextInputEditText
 import java.io.File
 
-class LoginActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var usernameInput: TextInputEditText
-    private lateinit var passwordInput: TextInputEditText
-    private lateinit var loginButton: MaterialButton
-    private lateinit var errorText: TextView
     private lateinit var avatarView: ShapeableImageView
     private lateinit var avatarManager: AvatarManager
-
     private var cameraPhotoUri: Uri? = null
 
     private val takePhotoLauncher = registerForActivityResult(
@@ -59,8 +51,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.loginRoot)) { view, insets ->
+        setContentView(R.layout.activity_settings)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settingsRoot)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -68,25 +60,28 @@ class LoginActivity : AppCompatActivity() {
 
         avatarManager = AvatarManager(this)
 
-        usernameInput = findViewById(R.id.usernameInput)
-        passwordInput = findViewById(R.id.passwordInput)
-        loginButton = findViewById(R.id.loginButton)
-        errorText = findViewById(R.id.errorText)
-        avatarView = findViewById(R.id.loginAvatar)
+        avatarView = findViewById(R.id.settingsAvatar)
 
         loadAvatar()
+        setupVersionInfo()
 
         avatarView.setOnClickListener { showAvatarPickerDialog() }
-
-        loginButton.setOnClickListener {
-            performLogin()
-        }
     }
 
     private fun loadAvatar() {
         val bitmap = avatarManager.load()
         if (bitmap != null) {
             avatarView.setImageBitmap(bitmap)
+        }
+    }
+
+    private fun setupVersionInfo() {
+        val versionText = findViewById<TextView>(R.id.versionInfo)
+        try {
+            val pkgInfo = packageManager.getPackageInfo(packageName, 0)
+            versionText.text = getString(R.string.settings_version, pkgInfo.versionName ?: "1.0")
+        } catch (e: PackageManager.NameNotFoundException) {
+            versionText.text = getString(R.string.settings_version, "1.0")
         }
     }
 
@@ -115,20 +110,5 @@ class LoginActivity : AppCompatActivity() {
 
     private fun pickPhoto() {
         pickPhotoLauncher.launch("image/*")
-    }
-
-    private fun performLogin() {
-        val username = usernameInput.text?.toString()?.trim().orEmpty()
-        val password = passwordInput.text?.toString().orEmpty()
-
-        if (username == "admin" && password == "123456") {
-            errorText.visibility = TextView.GONE
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            errorText.text = getString(R.string.login_error)
-            errorText.visibility = TextView.VISIBLE
-        }
     }
 }

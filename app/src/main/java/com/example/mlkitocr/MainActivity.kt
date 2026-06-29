@@ -97,6 +97,10 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        findViewById<MaterialButton>(R.id.settingsButton).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
         captureButton.setOnClickListener {
             captureImage()
         }

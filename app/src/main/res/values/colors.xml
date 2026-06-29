@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="avatar_bg">#3A3F45</color>
+    <color name="avatar_border">#555555</color>
 </resources>

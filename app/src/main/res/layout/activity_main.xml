@@ -86,6 +86,23 @@
         tools:text="识别结果不完整，请检查后确认或重新拍摄" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/settingsButton"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/settings_short"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:icon="@drawable/ic_settings"
+        app:iconGravity="textStart"
+        app:iconSize="20dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/captureButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

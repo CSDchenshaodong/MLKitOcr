@@ -36,18 +36,35 @@
         app:layout_constraintTop_toBottomOf="@id/appTitle"
         android:layout_marginTop="8dp" />
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/loginAvatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/avatar_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_person"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appSubtitle"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        app:strokeColor="@color/avatar_border"
+        app:strokeWidth="2dp" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameLayout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/login_username_hint"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
         app:boxStrokeColor="@android:color/white"
         app:hintTextColor="#80FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appSubtitle">
+        app:layout_constraintTop_toBottomOf="@id/loginAvatar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/usernameInput"

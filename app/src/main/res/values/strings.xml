@@ -27,4 +27,12 @@
     <string name="login_password_hint">Password</string>
     <string name="login_button">Sign In</string>
     <string name="login_error">Incorrect username or password</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_short">Settings</string>
+    <string name="settings_version">Version %s</string>
+    <string name="avatar_change_title">Change Avatar</string>
+    <string name="avatar_change_hint">Tap to change avatar</string>
+    <string name="avatar_take_photo">Take Photo</string>
+    <string name="avatar_choose_from_gallery">Choose from Gallery</string>
 </resources>
