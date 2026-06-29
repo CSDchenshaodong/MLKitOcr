@@ -34,6 +34,7 @@
     <string name="settings_language">Language</string>
     <string name="settings_language_desc">Switch between Chinese and English</string>
     <string name="settings_logout">Log Out</string>
+    <string name="settings_button">Settings</string>
     <string name="avatar_change_title">Change Avatar</string>
     <string name="avatar_change_hint">Tap to change avatar</string>
     <string name="avatar_take_photo">Take Photo</string>

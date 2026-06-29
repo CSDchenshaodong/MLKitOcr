@@ -34,6 +34,7 @@
     <string name="settings_language">语言</string>
     <string name="settings_language_desc">切换中文和英文</string>
     <string name="settings_logout">退出登录</string>
+    <string name="settings_button">设置</string>
     <string name="avatar_change_title">更换头像</string>
     <string name="avatar_change_hint">点击更换头像</string>
     <string name="avatar_take_photo">拍照</string>
